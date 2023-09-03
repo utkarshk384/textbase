@@ -4,6 +4,7 @@ import requests
 import time
 import typing
 import traceback
+from bardapi import Bard
 
 from textbase import Message
 
@@ -144,3 +145,41 @@ class BotLibre:
         message = data['message']
 
         return message
+
+
+class BardModel:
+    api_key = None
+
+    @classmethod
+    def generate(
+        cls,
+        system_prompt: str,
+        message_history: list[Message],
+        timeout: int = 30,
+    ):
+        assert cls.api_key is not None, "Bard cookie is not set."
+
+        session = requests.session()
+        session.headers = {
+            "Host": "bard.google.com",
+            "X-Same-Domain": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+            "Origin": "https://bard.google.com",
+            "Referer": "https://bard.google.com/",
+        }
+
+        # Set Session ID
+        session.cookies.set("__Secure-1PSID", cls.api_key)
+
+        previous_messages = [] # Message histories
+        for message in message_history:
+            #list of all the contents inside a single message
+            contents = get_contents(message, "STRING")
+            if contents:
+                previous_messages.extend(contents)
+
+        current_message = previous_messages.pop(-1)
+        response = Bard(token=cls.api_key, session=session, timeout=timeout).get_answer(current_message['content'])
+
+        return response['content']

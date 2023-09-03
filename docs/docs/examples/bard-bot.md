@@ -73,5 +73,5 @@ Below is a video demonstrating the steps above.
 
 # Limitations of Bard
 
-1. Since Google has not released the offical API for Bard, we'll have to use the cookies for authentication.
+1. Since Google has not released the offical API for Bard, we'll have to use the cookies for authentication which needs to be renewed each time you use the bot by signing out and signing into the google account.
 2. Since Google handles all the conversation history, Bard doesn't remember the context of the conversation. So, if you ask a question and then ask another question, it won't remember the context of the first question.
